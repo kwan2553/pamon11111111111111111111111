@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมเคมี: ไอโซโทป ไอโซโทน ไอโซบาร์ (NEON EDITION)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        body {
+            background: #080710;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(#ff007f, #7928ca);
+            border-radius: 50%;
+            top: 5%;
+            left: 10%;
+            filter: blur(90px);
+            z-index: -1;
+            animation: floatGlow 8s infinite alternate;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(#00f2fe, #4facfe);
+            border-radius: 50%;
+            bottom: 5%;
+            right: 10%;
+            filter: blur(90px);
+            z-index: -1;
+            animation: floatGlow 6s infinite alternate-reverse;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.2); }
+        }
+
+        .container {
+            background: rgba(15, 15, 26, 0.65);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ff007f, #00f2fe, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+            margin-top: 0;
+        }
+
+        h2, h3 { color: #00f2fe; }
+
+        .screen { display: none; }
+        .active { display: block; }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 15px;
+            margin: 20px 0;
+            border: 2px solid #00f2fe;
+            border-radius: 30px;
+            font-size: 18px;
+            text-align: center;
+            outline: none;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+            transition: 0.3s;
+        }
+        input[type="text"]:focus {
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.8);
+            border-color: #ff007f;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff007f, #7928ca);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            margin: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 5px 15px rgba(255, 0, 127, 0.4);
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 0, 127, 0.7);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .how-to-play-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 18px;
+            margin: 15px 0;
+            text-align: left;
+            font-size: 14px;
+            border: 1px solid rgba(255, 0, 127, 0.3);
+            box-shadow: inset 0 0 10px rgba(255, 0, 127, 0.1);
+        }
+
+        .concept-badge {
+            background: linear-gradient(90deg, #00f2fe, #4facfe);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px 18px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .combo-text {
+            color: #ffea00;
+            font-weight: 800;
+            text-shadow: 0 0 10px #ffea00;
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+
+        .timer-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 14px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px #000;
+        }
+
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #00ff88, #ffea00, #ff0055);
+            transition: width 1s linear;
+        }
+
+        .timer-warning {
+            animation: flashDanger 0.4s infinite alternate;
+        }
+
+        @keyframes flashDanger {
+            0% { background: #ff0055; box-shadow: 0 0 15px #ff0055; }
+            100% { background: #ffea00; box-shadow: 0 0 25px #ffea00; }
+        }
+
+        .elements-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .element-box {
+            background: rgba(255, 255, 255, 0.95);
+            color: #111;
+            padding: 15px;
+            border-radius: 15px;
+            width: 100px;
+            height: 100px;
+            font-weight: bold;
+            position: relative;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .symbol { font-size: 36px; font-weight: 800; }
+        .mass-num { position: absolute; top: 8px; left: 12px; font-size: 16px; color: #7928ca; }
+        .atomic-num { position: absolute; bottom: 8px; left: 12px; font-size: 16px; color: #ff007f; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .opt-btn {
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 15px;
+        }
+
+        .feedback-box {
+            min-height: 50px;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .feedback-correct {
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .feedback-wrong {
+            background: rgba(255, 0, 85, 0.2);
+            border: 2px solid #ff0055;
+            color: #ff0055;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+        }
+
+        .shake {
+            animation: shakeAnim 0.4s ease-in-out;
+        }
+
+        @keyframes shakeAnim {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .result-card {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .win-theme {
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+
+        .lose-theme {
+            border: 2px solid #ff0055;
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="main-container">
+        <!-- 1. หน้าปกเกม -->
+        <div id="cover-screen" class="screen active">
+            <h1>⚛️ ISOTOPE DASH ⚛️</h1>
+            <p style="color: #00f2fe; letter-spacing: 2px;">พิชิตไอโซโทป ไอโซโทน ไอโซบาร์</p>
+            <input type="text" id="player-name-input" placeholder="⚡ ใส่ชื่อของคุณ..." maxlength="15">
+            <br>
+            <button onclick="goToMenu()">เข้าสู่เกม 🚀</button>
+        </div>
+
+        <!-- 2. หน้าเมนูหลัก & วิธีการเล่น -->
+        <div id="menu-screen" class="screen">
+            <h2>ยินดีต้อนรับคุณ <span id="display-player-name" style="color: #ff007f;"></span></h2>
+            
+            <div class="how-to-play-box">
+                <h4 style="margin-top:0; color:#00ff88;">🔥 กฎการเล่น (10 วินาที/ข้อ)</h4>
+                <ul style="line-height: 1.8;">
+                    <li><span class="concept-badge">ไอโซโทป</span> = โปรตอนเท่า (เลขล่างเท่ากัน)</li>
+                    <li><span class="concept-badge">ไอโซโทน</span> = นิวตรอนเท่า (เลขบน - เลขล่าง เท่ากัน)</li>
+                    <li><span class="concept-badge">ไอโซบาร์</span> = เลขมวลเท่า (เลขบนเท่ากัน)</li>
+                    <li>⚡ <b>กติกาคะแนน:</b> ตอบถูก $+10$ คะแนน</li>
+                    <li>💖 <b>โบนัสหัวใจ:</b> ตอบถูกติดกัน <b>3 ข้อ</b> ฟื้นฟู $+1$ หัวใจ (สะสมสูงสุดไม่เกิน 3 ดวง)</li>
+                    <li>💥 ตอบผิดหรือหมดเวลา: $-5$ คะแนน และเสีย 1 หัวใจ</li>
+                </ul>
+            </div>
+
+            <button onclick="goToDifficulty()">เลือกความยาก & เริ่มเลย ⚔️</button>
+            <br>
+            <button onclick="showScreen('cover-screen')" style="background: #444;">เปลี่ยนชื่อ</button>
+        </div>
+
+        <!-- 3. หน้าเลือกระดับความยาก -->
+        <div id="difficulty-screen" class="screen">
+            <h2>เลือกระดับความยาก</h2>
+            <p>เลือกโหมดเพื่อเริ่มแข่งขัน (10 ข้อ)</p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button onclick="startGame('easy')" style="background: linear-gradient(135deg, #00b09b, #96c93d);">🟢 EASY - ระดับทั่วไป</button>
+                <button onclick="startGame('medium')" style="background: linear-gradient(135deg, #f857a6, #ff5858);">🟡 MEDIUM - ระดับท้าทาย</button>
+                <button onclick="startGame('hard')" style="background: linear-gradient(135deg, #4776E6, #8E54E9);">🔴 HARD - ระดับมหาโหด</button>
+            </div>
+            <br>
+            <button onclick="showScreen('menu-screen')" style="background: #444;">ย้อนกลับ</button>
+        </div>
+
+        <!-- 4. หน้าเล่นเกม -->
+        <div id="game-screen" class="screen">
+            <div class="stats-bar">
+                <div>ข้อ: <span id="current-level" style="color:#00f2fe; font-weight:bold;">1</span>/10</div>
+                <div>⏱️ <span id="time-text" style="color: #00ff88; font-weight: bold; font-size:18px;">10</span>s</div>
+                <div>SCORE: <span id="score" style="color:#ffea00; font-weight:bold;">0</span></div>
+                <div><span id="combo-display" class="combo-text"></span></div>
+                <div><span id="hearts">❤️❤️❤️</span></div>
+            </div>
+
+            <div class="timer-container">
+                <div id="timer-bar" class="timer-bar"></div>
+            </div>
+
+            <p id="question-text" style="font-size: 18px; margin: 10px 0;">วิเคราะห์ความสัมพันธ์ของธาตุคู่นี้!</p>
+
+            <div class="elements-display">
+                <div class="element-box">
+                    <span class="mass-num" id="mass1">12</span>
+                    <span class="atomic-num" id="atomic1">6</span>
+                    <span class="symbol" id="symbol1">C</span>
+                </div>
+                <div style="font-size: 28px; font-weight:bold; color:#ff007f;">VS</div>
+                <div class="element-box">
+                    <span class="mass-num" id="mass2">13</span>
+                    <span class="atomic-num" id="atomic2">6</span>
+                    <span class="symbol" id="symbol2">C</span>
+                </div>
+            </div>
+
+            <div id="feedback" class="feedback-box" style="visibility: hidden;"></div>
+
+            <div class="options-grid">
+                <button class="opt-btn" onclick="checkAnswer('isotope')">ไอโซโทป<br><small>(ป. เท่า)</small></button>
+                <button class="opt-btn" onclick="checkAnswer('isotone')">ไอโซโทน<br><small>(น. เท่า)</small></button>
+                <button class="opt-btn" onclick="checkAnswer('isobar')">ไอโซบาร์<br><small>(ม. เท่า)</small></button>
+            </div>
+        </div>
+
+        <!-- 5. หน้าสรุปผล -->
+        <div id="game-over-screen" class="screen">
+            <div id="result-card-box" class="result-card">
+                <div id="badge-icon" style="font-size: 70px;">🏆</div>
+                <h2 id="game-over-title">สรุปผลการเล่น</h2>
+                <p id="game-over-msg" style="font-size: 16px; line-height: 1.6;"></p>
+                <h3>คะแนนรวม: <br><span id="final-score" style="color: #ffea00; font-size: 42px; text-shadow: 0 0 15px #ffea00;">0</span> คะแนน</h3>
+            </div>
+
+            <button onclick="goToDifficulty()">เล่นอีกครั้ง 🔄</button>
+            <button onclick="showScreen('menu-screen')" style="background: #444;">กลับหน้าหลัก</button>
+        </div>
+    </div>
+
+    <script>
+        let playerName = "";
+        let currentDifficulty = "easy";
+        let level = 1;
+        let score = 0;
+        let lives = 3;
+        const maxLives = 3; // จำกัดหัวใจสูงสุด 3 ดวงเท่านั้น
+        let combo = 0;
+        let currentQuestion = null;
+        
+        let timeLeft = 10;
+        let timerInterval = null;
+        const maxTime = 10;
+
+        const questions = {
+            easy: [
+                { e1: { s: "C", a: 6, m: 13 }, e2: { s: "N", a: 7, m: 14 }, ans: "isotone" },
+                { e1: { s: "Na", a: 11, m: 24 }, e2: { s: "Mg", a: 12, m: 24 }, ans: "isobar" },
+                { e1: { s: "Cl", a: 17, m: 35 }, e2: { s: "Cl", a: 17, m: 37 }, ans: "isotope" },
+                { e1: { s: "Si", a: 14, m: 30 }, e2: { s: "P", a: 15, m: 31 }, ans: "isotone" },
+                { e1: { s: "Ar", a: 18, m: 40 }, e2: { s: "Ca", a: 20, m: 40 }, ans: "isobar" },
+                { e1: { s: "S", a: 16, m: 32 }, e2: { s: "S", a: 16, m: 34 }, ans: "isotope" },
+                { e1: { s: "K", a: 19, m: 39 }, e2: { s: "Ca", a: 20, m: 40 }, ans: "isotone" },
+                { e1: { s: "Fe", a: 26, m: 58 }, e2: { s: "Ni", a: 28, m: 58 }, ans: "isobar" },
+                { e1: { s: "O", a: 8, m: 16 }, e2: { s: "O", a: 8, m: 17 }, ans: "isotope" },
+                { e1: { s: "Mg", a: 12, m: 26 }, e2: { s: "Al", a: 13, m: 27 }, ans: "isotone" }
+            ],
+            medium: [
+                { e1: { s: "P", a: 15, m: 31 }, e2: { s: "S", a: 16, m: 32 }, ans: "isotone" },
+                { e1: { s: "Cr", a: 24, m: 54 }, e2: { s: "Fe", a: 26, m: 54 }, ans: "isobar" },
+                { e1: { s: "Cu", a: 29, m: 63 }, e2: { s: "Cu", a: 29, m: 65 }, ans: "isotope" },
+                { e1: { s: "Zn", a: 30, m: 66 }, e2: { s: "Ge", a: 32, m: 68 }, ans: "isotone" },
+                { e1: { s: "Se", a: 34, m: 76 }, e2: { s: "Kr", a: 36, m: 76 }, ans: "isobar" },
+                { e1: { s: "Br", a: 35, m: 79 }, e2: { s: "Br", a: 35, m: 81 }, ans: "isotope" },
+                { e1: { s: "Rb", a: 37, m: 85 }, e2: { s: "Sr", a: 38, m: 86 }, ans: "isotone" },
+                { e1: { s: "Sr", a: 38, m: 88 }, e2: { s: "Zr", a: 40, m: 88 }, ans: "isobar" },
+                { e1: { s: "Ag", a: 47, m: 107 }, e2: { s: "Ag", a: 47, m: 109 }, ans: "isotope" },
+                { e1: { s: "Cd", a: 48, m: 112 }, e2: { s: "Sn", a: 50, m: 114 }, ans: "isotone" }
+            ],
+            hard: [
+                { e1: { s: "Xe", a: 54, m: 136 }, e2: { s: "Ba", a: 56, m: 138 }, ans: "isotone" },
+                { e1: { s: "Te", a: 52, m: 130 }, e2: { s: "Xe", a: 54, m: 130 }, ans: "isobar" },
+                { e1: { s: "I", a: 53, m: 127 }, e2: { s: "I", a: 53, m: 131 }, ans: "isotope" },
+                { e1: { s: "Nd", a: 60, m: 144 }, e2: { s: "Sm", a: 62, m: 146 }, ans: "isotone" },
+                { e1: { s: "Pt", a: 78, m: 198 }, e2: { s: "Hg", a: 80, m: 198 }, ans: "isobar" },
+                { e1: { s: "Au", a: 79, m: 197 }, e2: { s: "Hg", a: 80, m: 198 }, ans: "isotone" },
+                { e1: { s: "Pb", a: 82, m: 206 }, e2: { s: "Pb", a: 82, m: 208 }, ans: "isotope" },
+                { e1: { s: "Po", a: 84, m: 210 }, e2: { s: "Rn", a: 86, m: 212 }, ans: "isotone" },
+                { e1: { s: "Ra", a: 88, m: 226 }, e2: { s: "Th", a: 90, m: 226 }, ans: "isobar" },
+                { e1: { s: "U", a: 92, m: 235 }, e2: { s: "Pu", a: 94, m: 237 }, ans: "isotone" }
+            ]
+        };
+
+        function showScreen(screenId) {
+            clearInterval(timerInterval);
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function goToMenu() {
+            const input = document.getElementById('player-name-input').value.trim();
+            if (input === "") {
+                alert("กรุณาใส่ชื่อผู้เล่นก่อนครับ!");
+                return;
+            }
+            playerName = input;
+            document.getElementById('display-player-name').innerText = playerName;
+            showScreen('menu-screen');
+        }
+
+        function goToDifficulty() {
+            showScreen('difficulty-screen');
+        }
+
+        function startGame(difficulty) {
+            currentDifficulty = difficulty;
+            level = 1;
+            score = 0;
+            lives = 3;
+            combo = 0;
+            
+            showScreen('game-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            hideFeedback();
+            setButtonsDisabled(false);
+            updateStats();
+            
+            const qList = questions[currentDifficulty];
+            currentQuestion = qList[level - 1];
+
+            document.getElementById('symbol1').innerText = currentQuestion.e1.s;
+            document.getElementById('atomic1').innerText = currentQuestion.e1.a;
+            document.getElementById('mass1').innerText = currentQuestion.e1.m;
+
+            document.getElementById('symbol2').innerText = currentQuestion.e2.s;
+            document.getElementById('atomic2').innerText = currentQuestion.e2.a;
+            document.getElementById('mass2').innerText = currentQuestion.e2.m;
+
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = maxTime;
+            updateTimerDisplay();
+
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.classList.remove('timer-warning');
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 3) {
+                    timerBar.classList.add('timer-warning');
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('time-text').innerText = timeLeft;
+            const percentage = (timeLeft / maxTime) * 100;
+            document.getElementById('timer-bar').style.width = percentage + "%";
+        }
+
+        function handleTimeout() {
+            triggerShake();
+            showFeedback(false, "⏰ หมดเวลา! (-1 ❤️, -5 คะแนน)");
+            processResult(false);
+        }
+
+        function checkAnswer(userAns) {
+            clearInterval(timerInterval);
+            setButtonsDisabled(true);
+
+            if (userAns === currentQuestion.ans) {
+                combo++;
+                let bonus = (combo - 1) * 2;
+                let points = 10 + bonus;
+                score += points;
+                
+                let msg = `✨ ถูกต้อง! (+${points} คะแนน)`;
+
+                // ตรวจสอบเงื่อนไขตอบถูกติดกันครบ 3 ข้อ
+                if (combo % 3 === 0) {
+                    if (lives < maxLives) {
+                        lives++;
+                        msg += ` | 💖 คอมโบ x${combo} ได้รับหัวใจเพิ่ม +1!`;
+                    } else {
+                        msg += ` | 💖 คอมโบ x${combo} (หัวใจเต็ม 3 ดวงแล้ว!)`;
+                    }
+                }
+
+                showFeedback(true, msg);
+                processResult(true);
+            } else {
+                triggerShake();
+                showFeedback(false, `💥 ผิดครับ! เฉลย: ${getConceptName(currentQuestion.ans)}`);
+                processResult(false);
+            }
+        }
+
+        function triggerShake() {
+            const container = document.getElementById('main-container');
+            container.classList.add('shake');
+            setTimeout(() => container.classList.remove('shake'), 400);
+        }
+
+        function processResult(isCorrect) {
+            if (!isCorrect) {
+                combo = 0;
+                lives--;
+                score = Math.max(0, score - 5);
+            }
+            updateStats();
+
+            setTimeout(() => {
+                if (lives <= 0) {
+                    endGame(false);
+                } else if (level >= 10) {
+                    endGame(true);
+                } else {
+                    level++;
+                    loadQuestion();
+                }
+            }, 1600);
+        }
+
+        function showFeedback(isCorrect, message) {
+            const fb = document.getElementById('feedback');
+            fb.style.visibility = "visible";
+            fb.innerText = message;
+            fb.className = isCorrect ? "feedback-box feedback-correct" : "feedback-box feedback-wrong";
+        }
+
+        function hideFeedback() {
+            document.getElementById('feedback').style.visibility = "hidden";
+        }
+
+        function setButtonsDisabled(disabled) {
+            document.querySelectorAll('.opt-btn').forEach(b => b.disabled = disabled);
+        }
+
+        function updateStats() {
+            document.getElementById('current-level').innerText = level;
+            document.getElementById('score').innerText = score;
+            document.getElementById('combo-display').innerText = combo > 1 ? `🔥 COMBO x${combo}` : "";
+            
+            let heartStr = "";
+            for (let i = 0; i < lives; i++) heartStr += "❤️";
+            document.getElementById('hearts').innerText = heartStr || "💀";
+        }
+
+        function getConceptName(key) {
+            if (key === 'isotope') return "ไอโซโทป (โปรตอนเท่า)";
+            if (key === 'isotone') return "ไอโซโทน (นิวตรอนเท่า)";
+            if (key === 'isobar') return "ไอโซบาร์ (เลขมวลเท่า)";
+            return "";
+        }
+
+        function endGame(isWin) {
+            showScreen('game-over-screen');
+            document.getElementById('final-score').innerText = score;
+            
+            const cardBox = document.getElementById('result-card-box');
+            const icon = document.getElementById('badge-icon');
+            const title = document.getElementById('game-over-title');
+            const msg = document.getElementById('game-over-msg');
+
+            if (isWin) {
+                cardBox.className = "result-card win-theme";
+                icon.innerText = "🏆✨";
+                title.innerText = "ยินดีด้วย คุณผ่านด่าน!";
+                title.style.color = "#00ff88";
+                msg.innerHTML = `เก่งมากครับคุณ <b>${playerName}</b>! ตอบถูกและผ่านด่านได้ครบถ้วนสำเร็จ`;
+            } else {
+                cardBox.className = "result-card lose-theme";
+                icon.innerText = "💔😭";
+                title.innerText = "จบเกม!";
+                title.style.color = "#ff0055";
+                msg.innerHTML = `เสียใจด้วยนะคุณ <b>${playerName}</b> หัวใจหมดลงก่อน... ลองฝึกซ้อมแล้วกลับมาแก้ตัวใหม่นะครับ!`;
+            }
+        }
+    </script>
+</body>
+</html>
