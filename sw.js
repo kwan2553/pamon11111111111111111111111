@@ -1,20 +1,31 @@
-const CACHE_NAME = 'isotope-dash-v1';
+const CACHE_NAME = 'isotope-dash-v2';
 const urlsToCache = [
   './',
   './index.html',
-  './manifest.json'
-  // หากมีไฟล์ css หรือ js แยกต่างหาก ให้ใส่เส้นทางไฟล์เพิ่มตรงนี้ เช่น './style.css', './script.js'
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
-// ติดตั้ง Service Worker และ Cache ไฟล์
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting())
   );
 });
 
-// เรียกใช้งานไฟล์จาก Cache เมื่อออฟไลน์
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.filter(name => name !== CACHE_NAME)
+                  .map(name => caches.delete(name))
+      );
+    }).then(() => self.clients.claim())
+  );
+});
+
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
